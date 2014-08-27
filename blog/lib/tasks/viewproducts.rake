@@ -14,18 +14,20 @@ task :viewproduct, [:date_added] => :environment do |task, args|
   header <<("date_addedx")
   productsStr << header[0..-2]
   f = File.open("ihaitao_products_"+Time.now.strftime("%Y%m%d%H%M%S").to_s+".csv","w")
-  f.write(productsStr<<"\n"); 
+  f.write(productsStr<<"\n") 
   for product in products
 #  Product.find_each(batch_size: 100) do |product|
     productStr =""
     productDescription = ProductDescription.where("product_id = ? and language_id = ?",product.product_id,2).first
+    puts product.inspect
+    puts productDescription.inspect
     puts "product description #{product.product_id}, #{product.model}, #{productDescription.name}"
     productStr << (product.product_id.to_s + "," + product.model.to_s + "," + productDescription.name + "," + product.weight.to_s + "," + product.stock_status_id.to_s + ","+ product.status.to_s + ",")
     #add price groups
       for customterGroupDescription in customerGroupDescriptions
         groupPrice =""
         puts "customer group #{customterGroupDescription.customer_group_id}, #{customterGroupDescription.name}"
-        productSpecial = ProductSpecial.where("product_id = ? and customer_group_id = ? and date_start = ?",product.product_id,customterGroupDescription.customer_group_id,'0000-00-00')
+        productSpecial = ProductSpecial.where("product_id = ? and customer_group_id = ? and date_start >= ?",product.product_id,customterGroupDescription.customer_group_id,'0000-00-00')
           unless productSpecial.empty? 
             for ps in productSpecial
               groupPrice << (ps.price.to_s + ",")
