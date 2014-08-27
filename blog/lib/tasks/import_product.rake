@@ -48,17 +48,17 @@ task :import_product, [:filename] =>:environment do |task, args|
     product.subtract = 1
     product.sort_order = 0
     product.status = false
-    product.date_added = DateTime.now
-    product.date_modified = DateTime.now
+    product.date_added = DateTime.now -2
+    product.date_modified = DateTime.now -2
     product.save
 
+    #add product name
     productDescription = ProductDescription.new
     productDescription.product_id = product.product_id
     productDescription.language_id = 1
     productDescription.name = row['english']
     productDescription.description = ''
     productDescription.meta_description = ''
-    productDescription.meta_keyword = ''
     productDescription.meta_keyword = ''
     productDescription.tag = ''
 
@@ -76,7 +76,14 @@ task :import_product, [:filename] =>:environment do |task, args|
 
     pd.save 
 
-  #add product name
+    #add product to store
+    productStore = ProductStore.new
+    productStore.product_id = product.product_id
+    productStore.store_id = 0
+    productStore.save
+
+  
+
   end
 
 end
